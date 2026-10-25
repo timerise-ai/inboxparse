@@ -9,6 +9,22 @@ This changelog is the skill's audit record. Each release separates what it fixed
 of this skill and how the fix was verified, what it kept on purpose and why, and what it added that has not
 run outside the test suite.
 
+## [0.1.6] - 2026-10-25
+
+Fix release, from scoring the prompt-1 agent eval runs of 0.1.5. Prose only; the templates were verified as
+for 0.1.1, with 21 tests and 16 without replies.
+
+### Changed
+
+- `SKILL.md` and `references/client.md` say why `client.ts` reads `INBOXPARSE_BASE_URL` at module level: it
+  has a default, so the build never requires it, and the server reads it again when it loads the module. An
+  agent moved the read into `inboxparseFetch` on 0.1.0 and again on 0.1.5. `SKILL.md` now says no variable
+  is required at build time, rather than read.
+
+### Kept
+
+- The module-level `BASE_URL` in `client.ts`.
+
 ## [0.1.5] - 2026-10-25
 
 Fix release, from scoring the prompt-1 agent eval runs of 0.1.4. Prose only; the templates were verified as
