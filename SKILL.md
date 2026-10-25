@@ -139,8 +139,9 @@ For any other endpoint, [api-reference.md](references/api-reference.md); for an 
 `get-email.sh`, `search-emails.sh`, `send-email.sh`, `setup-webhook.sh`) call the API from a shell with the
 key read from the environment.
 
-No InboxParse variable is read at build time, so `npm run typecheck`, `npm run build` and `npm test` pass in
-an environment with none of them set and no network.
+No InboxParse variable is required at build time, and `client.ts`'s module-level `BASE_URL` stays where it is: it
+has a default, and the server reads it again when it loads the module. `npm run typecheck`, `npm run build`
+and `npm test` pass with none of them set and no network.
 
 ## Reference directory
 

@@ -17,7 +17,9 @@ TypeScript and the `server-only` package installed (`npm i server-only`).
 Keys are created in the InboxParse console under API keys. A key starts with `ip_` and carries a role:
 `member` keys are refused with `403 forbidden` on every write, `admin` keys may write. The API accepts the key
 as `Authorization: Bearer ip_...` or `X-API-Key: ip_...`; the client uses the first. No variable is read at
-build time, so `next build` passes with none of them set.
+build time, so `next build` passes with none of them set. The module-level `BASE_URL` is no exception and is
+not moved into the call: it has a default, so the build never requires it, and the server reads it again when
+it loads the module.
 
 ## Types
 
