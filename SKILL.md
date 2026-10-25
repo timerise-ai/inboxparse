@@ -124,12 +124,12 @@ a file or SQLite database (lost and unshared on a serverless host, like memory);
 7. Add the suite, run by Vitest from `npm test`, 21 tests or 16 without replies:
    [testing.md](references/testing.md).
 
-**Handover.** The final summary tells the operator to register the webhook with
-`assets/examples/setup-webhook.sh` and store its one-time secret as `INBOXPARSE_WEBHOOK_SECRET`, to set
-`INBOXPARSE_API_KEY` and `CRON_SECRET` and call the sync route once, and, whichever applies: that the memory
-store loses every email on a cold start until the operator chooses a database, that `/inbox` is open until the
-host's auth covers it, and that nothing sends until `currentUserId` is wired and `INBOXPARSE_ADMIN_API_KEY` is
-set.
+**Handover.** The final message itself, not only a README it links, tells the operator by name to register the
+webhook with `assets/examples/setup-webhook.sh` and store its one-time secret as `INBOXPARSE_WEBHOOK_SECRET`,
+to set `INBOXPARSE_API_KEY` and `CRON_SECRET` and call the sync route once, and, whichever applies: that the
+memory store loses every email on a cold start until the operator chooses a database, that `/inbox` is open
+until the host's auth covers it, and that nothing sends until `currentUserId` is wired and
+`INBOXPARSE_ADMIN_API_KEY` is set. An operator reads the message, not the files.
 
 For any other endpoint, [api-reference.md](references/api-reference.md); for an error,
 [error-codes.md](references/error-codes.md). The scripts in `assets/examples/` (`list-emails.sh`,
