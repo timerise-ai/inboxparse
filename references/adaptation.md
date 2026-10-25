@@ -13,7 +13,7 @@ auth, tenancy, styling and i18n join, the order of work, and the non-negotiables
   [store.ts](#the-store-contract) is for development and tests only and loses everything on a cold start.
   A host with no database keeps the memory store that `instance.ts` ships and is told so in the handover;
   choosing a database, adding its driver and naming its variables are the host's decisions, never the
-  module's.
+  module's, and a file or `node:sqlite` database counts as one.
 
 ## The store contract
 

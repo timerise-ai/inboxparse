@@ -28,8 +28,12 @@ seen would step past it. The sync re-reads a **48-hour lookback** instead:
   with its cursor. The next run resumes that walk instead of restarting at the newest page, which a backlog
   larger than one run would otherwise never get past.
 
-Mail older than the window, such as an archive backfill of a newly connected mailbox, is outside it. Import
-it once by running the walk with `date_from` set to the start of the archive.
+Mail older than the window, such as the archive of a newly connected mailbox, is outside it, and
+`syncEmails` is not changed to reach it. Import it once by storing a walk that starts at the archive: call
+`inboxStore.setSyncState` with `{ lastCompletedAt: null, walk: { from: <archive start>, startedAt: <now>,
+cursor: null } }`, and the cron resumes that walk 10 pages a run until it completes, then returns to the
+window. It is the operator's one-off, run on request, and costs one list call per 100 emails and one detail
+call per email it stores.
 
 ```ts
 // lib/inboxparse/ingest.ts

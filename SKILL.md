@@ -98,15 +98,19 @@ InboxParse                                     Next.js app (server only)
 ## Quick start
 
 Copy every code block as written to the path on its first line. The only edits are the host's renames in
-[adaptation.md](references/adaptation.md) and the reply section's two lines; a timeout, a cache, another
-window, a history import or another runner is a change to this skill, not to the app.
+[adaptation.md](references/adaptation.md) and the reply section's two lines. Agents have added each of these,
+and each is wrong here: an in-flight map around `ingestEmail` (it does not span instances, and `saveEmail`
+already runs `onNewEmail` once); a walk from the start of the archive or a periodic full scan (each run spends
+the monthly quota; an archive import is a stored walk the operator starts, in [sync.md](references/sync.md));
+a file or SQLite database (lost and unshared on a serverless host, like memory); another test runner.
 
 1. Install `server-only` and `vitest` with npm, set `INBOXPARSE_API_KEY`, and write the types and client:
    [client.md](references/client.md). The package registry is not an external service: install even where a
    task says none is reachable, and never vendor a package.
 2. Implement `InboxStore` on the host's database and export it from `lib/inboxparse/instance.ts`:
    [adaptation.md](references/adaptation.md). A host with no database keeps the memory store `instance.ts`
-   ships; never add a database, a driver or a variable for it.
+   ships, even when the task says no email may be lost: which database holds the mail is the operator's
+   decision, and the handover asks for it. Never add one, `node:sqlite` or a file included, nor its variable.
 3. Add `syncEmails`, the cron route and its `vercel.json` entry with `CRON_SECRET`, and run it once:
    [sync.md](references/sync.md).
 4. Add the signature check and the webhook route, register the subscription with
@@ -123,8 +127,9 @@ window, a history import or another runner is a change to this skill, not to the
 **Handover.** The final summary tells the operator to register the webhook with
 `assets/examples/setup-webhook.sh` and store its one-time secret as `INBOXPARSE_WEBHOOK_SECRET`, to set
 `INBOXPARSE_API_KEY` and `CRON_SECRET` and call the sync route once, and, whichever applies: that the memory
-store loses every email on a cold start, that `/inbox` is open until the host's auth covers it, and that
-nothing sends until `currentUserId` is wired and `INBOXPARSE_ADMIN_API_KEY` is set.
+store loses every email on a cold start until the operator chooses a database, that `/inbox` is open until the
+host's auth covers it, and that nothing sends until `currentUserId` is wired and `INBOXPARSE_ADMIN_API_KEY` is
+set.
 
 For any other endpoint, [api-reference.md](references/api-reference.md); for an error,
 [error-codes.md](references/error-codes.md). The scripts in `assets/examples/` (`list-emails.sh`,
