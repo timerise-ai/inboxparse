@@ -104,7 +104,8 @@ already runs `onNewEmail` once); a walk from the start of the archive or a perio
 the monthly quota; an archive import is a stored walk the operator starts, in [sync.md](references/sync.md));
 a file or SQLite database (lost and unshared on a serverless host, like memory); a method on `InboxStore`,
 such as a list for an index page (every host must then implement it; the module ships one page per email and
-no list); another test runner.
+no list); dropping the error from a log line (an `InboxParseError` carries the API's message, never the
+email's); another test runner.
 
 1. Install `server-only` and `vitest` with npm, set `INBOXPARSE_API_KEY`, and write the types and client:
    [client.md](references/client.md). The package registry is not an external service: install even where a

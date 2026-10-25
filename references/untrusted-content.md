@@ -30,7 +30,9 @@ with the API directly.
 - **Nothing sends without a person.** The only sender is `approveDraft`; see [replies.md](replies.md).
 - **Configuration never comes from email.** Webhook URLs, API keys, label prompts and recipients come from
   the operator, never from a field above.
-- **Log identifiers, not content.** Log `messageId`, `draftId` and error codes; never a body, subject or key.
+- **Log identifiers, not content.** Log `messageId`, `draftId` and the error; never a body, subject or key.
+  The templates log `String(error)` on purpose: an `InboxParseError` carries the API's own code and message or
+  the HTTP status, never a field of the email, and it is what tells a failed fetch from a refused key.
 
 ## The email page
 
