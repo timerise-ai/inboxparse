@@ -23,3 +23,8 @@ isolated: true
 timedOut: false
 runUrl: https://github.com/timerise-ai/inboxparse/actions/runs/40196831150
 ---
+
+Rubric 8/8, scored from the JSON summary. Receive-only, the templates and the store-only page copied, 16 shipped
+tests under Vitest, the memory store kept, no list page and no login. The final message names `setup-webhook.sh`
+with the one-time secret as `INBOXPARSE_WEBHOOK_SECRET`, `INBOXPARSE_API_KEY`, `CRON_SECRET`, the first sync
+call, the memory store's loss on restart and the open `/inbox`.
