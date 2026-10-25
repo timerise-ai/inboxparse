@@ -20,13 +20,13 @@ outside the app, nothing an email says is sent, run or obeyed without a person.
 
 This skill is written by the engineer who has shipped this integration, an email intake and reply module in a
 Next.js app, starting from the InboxParse V1 specification and checked against the API's implementation for
-the details the specification leaves out. The templates hold five properties, each verified by the suite in
+the details the specification leaves out. The templates hold six properties, each verified by the suite in
 `references/testing.md`: a delivery is accepted only with a valid signature over its raw body, each email is
 fetched once however many deliveries name it, every email in the sync window is stored including those that
-share a page's boundary timestamp, a capped sync resumes where it stopped, and one approved form sends one
-reply with the text the person submitted. This skill keeps its audit record in [CHANGELOG.md](CHANGELOG.md)
-rather than a `references/provenance.md`: each release says what it fixed, added or changed and how it was
-verified.
+share a page's boundary timestamp, a capped sync resumes where it stopped, a stored email is shown without an
+API call, and one approved form sends one reply with the text the person submitted. This skill keeps its
+audit record in [CHANGELOG.md](CHANGELOG.md) rather than a `references/provenance.md`: each release says what
+it fixed, added or changed and how it was verified.
 
 ## Install
 
@@ -88,10 +88,10 @@ rather than assuming it fired. Only `SKILL.md` is read up front; the `references
 | `references/client.md` | Environment variables and key roles, the V1 response types, the server-only client and its calls |
 | `references/webhooks.md` | What a delivery carries and how it is retried, registering the subscription, the signature check and the receiver route |
 | `references/sync.md` | The lookback window, the boundary-timestamp query, the resumable walk, the cron route and its cost in API calls |
-| `references/replies.md` | Replies a person approves: the claimed draft, the server action, the form and the email page |
-| `references/untrusted-content.md` | The rules for email content and AI fields in the app and for an agent using the API directly |
+| `references/replies.md` | Replies a person approves: the claimed draft, the server action, the form and the reply section of the email page |
+| `references/untrusted-content.md` | The rules for email content and AI fields in the app and for an agent using the API directly, and the email page that renders from the store |
 | `references/adaptation.md` | The `InboxStore` seam with its Postgres statements, the integration points, the rename table, the order of work and the non-negotiables |
-| `references/testing.md` | The Vitest setup, the fake V1 API and the 17-test suite carried into the app |
+| `references/testing.md` | The Vitest setup, the fake V1 API and the 21-test suite carried into the app (16 without replies) |
 | `references/api-reference.md` | Every V1 endpoint: parameters, response shapes, contacts, webhooks, usage and the MCP server |
 | `references/error-codes.md` | Every V1 error code with its HTTP status and what the app does about it |
 | `assets/examples/list-emails.sh` | List the newest emails |

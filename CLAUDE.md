@@ -49,8 +49,8 @@ read it before simplifying anything.
   omits it, as do JSON bodies and shell commands.
 - **Identifiers are shared across files.** `inboxparseFetch`, `InboxParseError`, `listEmails`, `getEmail`,
   `listMailboxes`, `replyToEmail`, `verifySignature`, `SIGNATURE_HEADER`, `ingestEmail`, `syncEmails`,
-  `approveDraft`, `InboxStore`, `createMemoryStore`, `inboxStore`, `SyncState`, `ReplyDraft`, `onNewEmail`,
-  the `inboxparse_*` tables and the env names `INBOXPARSE_API_KEY`, `INBOXPARSE_ADMIN_API_KEY`,
+  `approveDraft`, `ReplySection`, `InboxStore`, `createMemoryStore`, `inboxStore`, `SyncState`, `ReplyDraft`,
+  `onNewEmail`, the `inboxparse_*` tables and the env names `INBOXPARSE_API_KEY`, `INBOXPARSE_ADMIN_API_KEY`,
   `INBOXPARSE_WEBHOOK_SECRET`, `INBOXPARSE_BASE_URL` and `CRON_SECRET` appear in several references. Rename
   in all of them or none.
 - **Keep the three tables in sync** with `references/` and `assets/`: the reference directory in `SKILL.md`,
@@ -59,14 +59,15 @@ read it before simplifying anything.
 - **Verify the templates** before a release that touches code. Copy `eval/fixture/` from the index to a
   scratch folder, rename `gitignore` to `.gitignore`, add `"noUncheckedIndexedAccess": true` to its
   `tsconfig.json`, run `npm install`, `npm i server-only` and `npm i -D vitest`, write every block of
-  `references/` that names a destination to that path, set `"test": "vitest run"`, then run
-  `npm run typecheck`, `npm run build` and `npm test` with no InboxParse variable set. All three pass on the
-  current release, with 17 tests.
+  `references/` that names a destination to that path, add the reply section's two lines to the page, set
+  `"test": "vitest run"`, then run `npm run typecheck`, `npm run build` and `npm test` with no InboxParse
+  variable set. All three pass on the current release, with 21 tests; without the reply files and
+  `drafts.test.ts`, with 16.
 - **Do not remove the odd-looking parts.** The exact-timestamp query at a page boundary, the resumable walk,
   the lookback measured from the last completed walk instead of now, `request.text()` before any parse, the
   length check before `timingSafeEqual`, the `204` to events the module ignores, `refresh` on
-  `email.ai_processed`, the `draftId` rendered into the form, and the session stub that returns `null`: each
-  holds for a reason recorded in `CHANGELOG.md`.
+  `email.ai_processed`, the page that reads the store alone, the `draftId` rendered into the form, and the
+  session stub that returns `null`: each holds for a reason recorded in `CHANGELOG.md`.
 - **The numbers that remain are load-bearing.** API facts (the 10-second delivery timeout, 5 attempts,
   10 failures to disable, `limit` 1 to 100 with a default of 50) and design parameters (the 48-hour
   lookback, the 10-page cap). Do not add a number without saying where it was verified.

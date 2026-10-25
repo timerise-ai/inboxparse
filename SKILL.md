@@ -97,19 +97,34 @@ InboxParse                                     Next.js app (server only)
 
 ## Quick start
 
-1. Install `server-only`, set `INBOXPARSE_API_KEY`, and write the types and client:
-   [client.md](references/client.md).
+Copy every code block as written to the path on its first line. The only edits are the host's renames in
+[adaptation.md](references/adaptation.md) and the reply section's two lines; a timeout, a cache, another
+window, a history import or another runner is a change to this skill, not to the app.
+
+1. Install `server-only` and `vitest` with npm, set `INBOXPARSE_API_KEY`, and write the types and client:
+   [client.md](references/client.md). The package registry is not an external service: install even where a
+   task says none is reachable, and never vendor a package.
 2. Implement `InboxStore` on the host's database and export it from `lib/inboxparse/instance.ts`:
-   [adaptation.md](references/adaptation.md).
+   [adaptation.md](references/adaptation.md). A host with no database keeps the memory store `instance.ts`
+   ships; never add a database, a driver or a variable for it.
 3. Add `syncEmails`, the cron route and its `vercel.json` entry with `CRON_SECRET`, and run it once:
    [sync.md](references/sync.md).
 4. Add the signature check and the webhook route, register the subscription with
    `assets/examples/setup-webhook.sh`, store the secret as `INBOXPARSE_WEBHOOK_SECRET`, and send the test
    event: [webhooks.md](references/webhooks.md).
-5. If the app replies, add the drafts, the server action, the form and the page, wire `currentUserId` to the
-   session and set `INBOXPARSE_ADMIN_API_KEY`: [replies.md](references/replies.md).
-6. Apply the rules for rendering, models and logs: [untrusted-content.md](references/untrusted-content.md).
-7. Add the suite and wire it to `npm test`: [testing.md](references/testing.md).
+5. Add the email page, which renders from the store alone, under the rules for rendering, models and logs:
+   [untrusted-content.md](references/untrusted-content.md). Who may open it is the host's auth; never invent a
+   login or a variable for it.
+6. If the app replies, add the drafts, the server action, the form and the reply section, wire
+   `currentUserId` to the session and set `INBOXPARSE_ADMIN_API_KEY`: [replies.md](references/replies.md).
+7. Add the suite, run by Vitest from `npm test`, 21 tests or 16 without replies:
+   [testing.md](references/testing.md).
+
+**Handover.** The final summary tells the operator to register the webhook with
+`assets/examples/setup-webhook.sh` and store its one-time secret as `INBOXPARSE_WEBHOOK_SECRET`, to set
+`INBOXPARSE_API_KEY` and `CRON_SECRET` and call the sync route once, and, whichever applies: that the memory
+store loses every email on a cold start, that `/inbox` is open until the host's auth covers it, and that
+nothing sends until `currentUserId` is wired and `INBOXPARSE_ADMIN_API_KEY` is set.
 
 For any other endpoint, [api-reference.md](references/api-reference.md); for an error,
 [error-codes.md](references/error-codes.md). The scripts in `assets/examples/` (`list-emails.sh`,
@@ -126,10 +141,10 @@ an environment with none of them set and no network.
 | Client, keys, types | API key, ip_, member, admin, Bearer, X-API-Key, fetch, types, V1Email, format, compact, 429 | [client.md](references/client.md) |
 | Webhook receiver | webhook, signature, X-InboxParse-Signature, HMAC, whsec_, email.received, email.ai_processed, retries, disabled, test event | [webhooks.md](references/webhooks.md) |
 | Sync | sync, poll, cron, CRON_SECRET, vercel.json, cursor, date_from, backfill, missed emails, lookback | [sync.md](references/sync.md) |
-| Replies and sending | reply, send, draft, approve, suggested_response, server action, mailbox_id, smtp_error | [replies.md](references/replies.md) |
-| Untrusted content | prompt injection, sanitize, dangerouslySetInnerHTML, HTML email, model, AI summary, logging | [untrusted-content.md](references/untrusted-content.md) |
-| Seam and host integration | store, database, Postgres, Supabase, Firestore, tenancy, multi-tenant, auth, rename, order of work | [adaptation.md](references/adaptation.md) |
-| Tests | test, vitest, npm test, fake API, concurrency | [testing.md](references/testing.md) |
+| Replies and sending | reply, send, draft, approve, suggested_response, server action, reply section, mailbox_id, smtp_error | [replies.md](references/replies.md) |
+| Email page, untrusted content | email page, show email, prompt injection, sanitize, dangerouslySetInnerHTML, HTML email, model, AI summary, logging | [untrusted-content.md](references/untrusted-content.md) |
+| Seam and host integration | store, database, no database, Postgres, Supabase, Firestore, tenancy, multi-tenant, auth, rename, order of work | [adaptation.md](references/adaptation.md) |
+| Tests | test, vitest, npm test, registry, fake API, concurrency, 21 tests | [testing.md](references/testing.md) |
 | Any endpoint | threads, search, mailboxes, IMAP, labels, contacts, usage, deliveries, MCP | [api-reference.md](references/api-reference.md) |
 | Errors | error code, 401, 403, 404, 409, 429, 502, unauthorized, forbidden, rate_limit_exceeded | [error-codes.md](references/error-codes.md) |
 

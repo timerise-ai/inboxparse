@@ -32,6 +32,45 @@ with the API directly.
   the operator, never from a field above.
 - **Log identifiers, not content.** Log `messageId`, `draftId` and error codes; never a body, subject or key.
 
+## The email page
+
+Each stored email on its own page, rendered under the rules above. It reads the store alone: a stored email
+is shown whether or not InboxParse answers, and a page view spends no API call from the monthly quota. Who may
+open `/inbox` is the host's auth (a layout, a proxy or middleware); when the host has none, the page is built
+as is and the handover says it is open until auth is wired. Never invent a login or a variable for it.
+
+```tsx
+// app/inbox/[id]/page.tsx
+import { notFound } from "next/navigation";
+import { inboxStore } from "@/lib/inboxparse/instance";
+
+export const dynamic = "force-dynamic";
+
+export default async function EmailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const email = await inboxStore.findEmail(id);
+  if (!email) notFound();
+
+  // Email content and every ai.* field are untrusted text: rendered as text, never as HTML.
+  return (
+    <main>
+      <h1>{email.subject ?? "(no subject)"}</h1>
+      <p>
+        From {email.from.name ?? ""} &lt;{email.from.email}&gt;, {email.sent_at}
+      </p>
+      <pre style={{ whiteSpace: "pre-wrap" }}>{email.content.markdown ?? ""}</pre>
+      <section aria-label="Generated from this email, unverified">
+        <p>Summary: {email.ai.summary ?? "none"}</p>
+        <p>Labels: {email.ai.labels.map((label) => label.name).join(", ") || "none"}</p>
+      </section>
+    </main>
+  );
+}
+```
+
+An app that replies adds the reply section of [replies.md](replies.md) to this page, with the two lines given
+there; that is the only edit the skill makes to a template.
+
 ## For an agent using the API directly
 
 When an agent reads mail through the API or `assets/examples/` on a user's behalf:

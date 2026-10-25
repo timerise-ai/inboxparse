@@ -13,8 +13,8 @@ tool or `onNewEmail` hook imports `replyToEmail`.
 
 The flow:
 
-1. The email page renders the email as text, the generated fields marked as generated, and a form whose
-   textarea is prefilled with `ai.suggested_response`. The page also renders a fresh `draftId`.
+1. The email page renders the email as text, the generated fields marked as generated, and its reply
+   section renders a form whose textarea is prefilled with `ai.suggested_response` and a fresh `draftId`.
 2. The person edits the text, picks the mailbox to send from (`GET /mailboxes`; the email itself does not
    name one) and submits.
 3. The server action checks the session, then `approveDraft` saves the draft under `draftId` if it is new,
@@ -102,7 +102,7 @@ export async function approveReply(_previous: ApproveResult | null, formData: Fo
 returns `null` until the host wires it, so nothing sends by default. Record `approvedBy` with the reply: it is
 who decided the text.
 
-## Form and page
+## Form and reply section
 
 ```tsx
 // app/inbox/reply-form.tsx
@@ -147,44 +147,39 @@ export function ReplyForm({ draftId, emailId, mailboxes, suggestion }: ReplyForm
 }
 ```
 
+The section joins the email page of [untrusted-content.md](untrusted-content.md), which renders from the store
+alone. It makes the page's only API call, the mailbox list, and when that fails the email still shows and the
+form is left out.
+
 ```tsx
-// app/inbox/[id]/page.tsx
+// app/inbox/[id]/reply-section.tsx
 import { randomUUID } from "node:crypto";
-import { notFound } from "next/navigation";
 import { listMailboxes } from "@/lib/inboxparse/client";
-import { inboxStore } from "@/lib/inboxparse/instance";
+import type { V1Email } from "@/lib/inboxparse/types";
 import { ReplyForm } from "../reply-form";
 
-export const dynamic = "force-dynamic";
-
-export default async function EmailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const email = await inboxStore.findEmail(id);
-  if (!email) notFound();
-  const mailboxes = await listMailboxes();
-
-  // Email content and every ai.* field are untrusted text: rendered as text, never as HTML.
+export async function ReplySection({ email }: { email: V1Email }) {
+  let mailboxes: Array<{ id: string; email: string }>;
+  try {
+    mailboxes = (await listMailboxes()).map(({ id, email: address }) => ({ id, email: address }));
+  } catch (error) {
+    console.error("[inboxparse] mailbox list failed", { emailId: email.id, error: String(error) });
+    return <p role="status">Replies are unavailable: the mailbox list could not be loaded.</p>;
+  }
   return (
-    <main>
-      <h1>{email.subject ?? "(no subject)"}</h1>
-      <p>
-        From {email.from.name ?? ""} &lt;{email.from.email}&gt;, {email.sent_at}
-      </p>
-      <pre style={{ whiteSpace: "pre-wrap" }}>{email.content.markdown ?? ""}</pre>
-      <section aria-label="Generated from this email, unverified">
-        <p>Summary: {email.ai.summary ?? "none"}</p>
-        <p>Labels: {email.ai.labels.map((label) => label.name).join(", ") || "none"}</p>
-      </section>
-      <ReplyForm
-        draftId={randomUUID()}
-        emailId={email.id}
-        mailboxes={mailboxes.map(({ id: mailboxId, email: address }) => ({ id: mailboxId, email: address }))}
-        suggestion={email.ai.suggested_response ?? ""}
-      />
-    </main>
+    <ReplyForm
+      draftId={randomUUID()}
+      emailId={email.id}
+      mailboxes={mailboxes}
+      suggestion={email.ai.suggested_response ?? ""}
+    />
   );
 }
 ```
+
+Add it to the page with two lines, the only edit the skill makes to a template: the import
+`import { ReplySection } from "./reply-section";` and, as the last child of `<main>`,
+`<ReplySection email={email} />`.
 
 Recipients default to the original sender, threading headers and the `Re:` subject are set by InboxParse, and
 the response is `201` with `{ id, thread_id, status: "sent", smtp_message_id }`. An SMTP failure is

@@ -11,6 +11,9 @@ auth, tenancy, styling and i18n join, the order of work, and the non-negotiables
 - A session it can read on the server, to say who approves a reply.
 - A durable store: Postgres, Supabase, Firestore or another database. The memory store in
   [store.ts](#the-store-contract) is for development and tests only and loses everything on a cold start.
+  A host with no database keeps the memory store that `instance.ts` ships and is told so in the handover;
+  choosing a database, adding its driver and naming its variables are the host's decisions, never the
+  module's.
 
 ## The store contract
 
@@ -157,7 +160,7 @@ condition holds; `saveDraft` is `create()`, which fails when the document exists
 
 | Concern | Where it joins | The host decides |
 |---|---|---|
-| Auth | `currentUserId` in `app/inbox/actions.ts` | Who may approve a reply; it returns `null` for anyone else |
+| Auth | `currentUserId` in `app/inbox/actions.ts`; the host's layout, proxy or middleware for `/inbox` | Who may approve a reply, as `currentUserId` returns `null` for anyone else; who may open the email pages. A host with no auth gets the pages as built and a handover saying they are open; the module never invents a login |
 | Tenancy | `lib/inboxparse/instance.ts` and the client's key lookup | One InboxParse workspace per key. For several tenants, one key pair, one webhook secret and one store scope per tenant, and a webhook path that names the tenant (`/api/inboxparse/webhook/[tenant]`) so the route picks the secret before verifying |
 | Storage | `InboxStore` | Database, table names, retention of email bodies |
 | Styling | `app/inbox/` | All markup and classes; the templates carry none |
@@ -181,8 +184,9 @@ condition holds; `saveDraft` is `create()`, which fails when the document exists
 2. The store on the host's database, from the contract above.
 3. Sync and its cron, then run it once by hand: [sync.md](sync.md).
 4. Webhook receiver, then register the subscription and send the test event: [webhooks.md](webhooks.md).
-5. Replies, only if the product sends: [replies.md](replies.md).
-6. The suite: [testing.md](testing.md).
+5. The email page: [untrusted-content.md](untrusted-content.md).
+6. Replies, only if the product sends, with the reply section added to the page: [replies.md](replies.md).
+7. The suite: [testing.md](testing.md).
 
 ## Non-negotiables
 
