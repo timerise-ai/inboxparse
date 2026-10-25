@@ -9,6 +9,22 @@ This changelog is the skill's audit record. Each release separates what it fixed
 of this skill and how the fix was verified, what it kept on purpose and why, and what it added that has not
 run outside the test suite.
 
+## [0.1.5] - 2026-10-25
+
+Fix release, from scoring the prompt-1 agent eval runs of 0.1.4. Prose only; the templates were verified as
+for 0.1.1, with 21 tests and 16 without replies.
+
+### Changed
+
+- `references/untrusted-content.md` said to log "error codes" while the templates log `String(error)`, and an
+  agent removed the error from the webhook route's log line. The rule now matches the templates and says why:
+  an `InboxParseError` carries the API's own code and message or the HTTP status, never a field of the email,
+  which was checked against `inboxparseFetch`. `SKILL.md` lists dropping it among the additions not to make.
+
+### Kept
+
+- `error: String(error)` in the webhook route, the reply approval and the reply section's log lines.
+
 ## [0.1.4] - 2026-10-25
 
 Fix release, from scoring the prompt-1 agent eval runs of 0.1.3. Prose only; the templates were verified as
