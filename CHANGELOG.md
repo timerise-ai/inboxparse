@@ -9,6 +9,44 @@ This changelog is the skill's audit record. Each release separates what it fixed
 of this skill and how the fix was verified, what it kept on purpose and why, and what it added that has not
 run outside the test suite.
 
+## [0.1.1] - 2026-10-25
+
+Fix release, from scoring the prompt-1 agent eval runs of 0.1.0 against a fixed fidelity rubric. The
+templates were verified in the index's eval fixture with `strict` and `noUncheckedIndexedAccess`: with the
+reply section, `npm run typecheck`, `npm run build` and `npm test` (21 tests) pass with no InboxParse variable
+set; without the reply files and `drafts.test.ts`, the same three pass with 16 tests.
+
+### Fixed
+
+- The email page no longer calls the API. It awaited `listMailboxes()` before rendering, so a stored email
+  could not be shown with no key set, with InboxParse unreachable or with the monthly quota spent, and every
+  view cost an API call. Found by an agent that patched the page during the eval; reproduced by rendering the
+  0.1.0 page for a stored email with no key, which threw `INBOXPARSE_API_KEY is not set`. The page now reads
+  the store alone and lives in `references/untrusted-content.md`; the reply form joins it through
+  `ReplySection` in `references/replies.md`, which renders a notice instead of the form when the mailbox list
+  fails. `page.test.ts` fails on the 0.1.0 page. Apps built from 0.1.0 that reply should copy the new page and
+  `app/inbox/[id]/reply-section.tsx`.
+
+### Changed
+
+- `SKILL.md` quick start: copy every block as written; the package registry is not an external service, so
+  `server-only` and `vitest` are installed with npm and never vendored or ported; a host with no database
+  keeps the memory store; who may open `/inbox` is the host's auth, and no login or variable is invented. An
+  agent read "no external services are reachable" as no registry and ported the suite to `node --test`; two
+  agents added a database and one a login with variables the skill never names.
+- `SKILL.md` gains a handover paragraph: register the webhook and store its one-time secret as
+  `INBOXPARSE_WEBHOOK_SECRET`, set `INBOXPARSE_API_KEY` and `CRON_SECRET` and call the sync once, and say
+  which off state applies (memory store, open pages, replies not wired). Two agents' summaries named none of
+  them.
+- `references/testing.md`: 21 tests in five files, 16 in four without replies; the fake API answers
+  `GET /mailboxes`. `references/adaptation.md` adds the email page to the order of work and states the
+  no-database and no-auth cases.
+
+### Added
+
+- `ReplySection` and the read-only email page split, and the rule that the reply section's two lines are the
+  only edit the skill makes to a template, are this release's design, not the API's.
+
 ## [0.1.0] - 2026-10-08
 
 First release under the Timerise Skills standard. The skill now builds an InboxParse integration in a Next.js
