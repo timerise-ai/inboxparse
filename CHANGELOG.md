@@ -9,6 +9,18 @@ This changelog is the skill's audit record. Each release separates what it fixed
 of this skill and how the fix was verified, what it kept on purpose and why, and what it added that has not
 run outside the test suite.
 
+## [0.1.4] - 2026-10-25
+
+Fix release, from scoring the prompt-1 agent eval runs of 0.1.3. Prose only; the templates were verified as
+for 0.1.1, with 21 tests and 16 without replies.
+
+### Changed
+
+- `SKILL.md` and `references/adaptation.md`: `InboxStore` is copied as written, since a method added to it is
+  one every host's adapter must implement, and the module ships one page per email and no list; a list page
+  the host wants reads its own table outside the seam. An agent added `listStoredEmails()` to the interface
+  to back an index page the task did not ask for.
+
 ## [0.1.3] - 2026-10-25
 
 Fix release, from scoring the prompt-1 agent eval runs of 0.1.2. Prose only; the templates were verified as
