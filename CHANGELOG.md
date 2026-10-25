@@ -9,6 +9,23 @@ This changelog is the skill's audit record. Each release separates what it fixed
 of this skill and how the fix was verified, what it kept on purpose and why, and what it added that has not
 run outside the test suite.
 
+## [0.1.2] - 2026-10-25
+
+Fix release, from scoring the prompt-1 agent eval runs of 0.1.1. Prose only; the templates were verified as
+for 0.1.1, with 21 tests and 16 without replies.
+
+### Changed
+
+- `references/sync.md` said to import an archive "by running the walk with `date_from` set to the start of
+  the archive", which `syncEmails` cannot do without a change, and an agent rewrote the sync to walk from
+  1970 with periodic full scans. It now gives the one-off that needs no change: a walk stored with
+  `setSyncState` starting at the archive, which the cron resumes 10 pages a run, and its cost.
+- `SKILL.md` quick start names each addition agents made and why it is wrong here: an in-flight map around
+  `ingestEmail`, a walk from the start of the archive or a periodic full scan, a file or SQLite database,
+  another test runner. Step 2 keeps the memory store even when the task says no email may be lost, since
+  the database is the operator's decision, and the handover asks for it. `references/adaptation.md` counts
+  a file or `node:sqlite` database as a database.
+
 ## [0.1.1] - 2026-10-25
 
 Fix release, from scoring the prompt-1 agent eval runs of 0.1.0 against a fixed fidelity rubric. The
