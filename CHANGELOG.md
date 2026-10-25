@@ -9,6 +9,17 @@ This changelog is the skill's audit record. Each release separates what it fixed
 of this skill and how the fix was verified, what it kept on purpose and why, and what it added that has not
 run outside the test suite.
 
+## [0.1.3] - 2026-10-25
+
+Fix release, from scoring the prompt-1 agent eval runs of 0.1.2. Prose only; the templates were verified as
+for 0.1.1, with 21 tests and 16 without replies.
+
+### Changed
+
+- `SKILL.md` handover: the final message itself, not only a README it links, names the webhook registration,
+  `INBOXPARSE_WEBHOOK_SECRET`, `INBOXPARSE_API_KEY`, `CRON_SECRET`, the first sync call and the off state that
+  applies. An agent wrote them into the README and its final message only pointed there.
+
 ## [0.1.2] - 2026-10-25
 
 Fix release, from scoring the prompt-1 agent eval runs of 0.1.1. Prose only; the templates were verified as
