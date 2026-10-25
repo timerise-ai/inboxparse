@@ -101,6 +101,10 @@ export function createMemoryStore(): InboxStore {
 }
 ```
 
+The interface is the whole contract and is copied as written: a method added to it is one every host's
+adapter must then implement. The module ships one page per email and no list; a list or search page the host
+wants reads the host's own table, outside `InboxStore`.
+
 What an implementation must hold, whatever the database:
 
 | Method | Must |

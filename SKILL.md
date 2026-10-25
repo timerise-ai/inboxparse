@@ -102,7 +102,9 @@ Copy every code block as written to the path on its first line. The only edits a
 and each is wrong here: an in-flight map around `ingestEmail` (it does not span instances, and `saveEmail`
 already runs `onNewEmail` once); a walk from the start of the archive or a periodic full scan (each run spends
 the monthly quota; an archive import is a stored walk the operator starts, in [sync.md](references/sync.md));
-a file or SQLite database (lost and unshared on a serverless host, like memory); another test runner.
+a file or SQLite database (lost and unshared on a serverless host, like memory); a method on `InboxStore`,
+such as a list for an index page (every host must then implement it; the module ships one page per email and
+no list); another test runner.
 
 1. Install `server-only` and `vitest` with npm, set `INBOXPARSE_API_KEY`, and write the types and client:
    [client.md](references/client.md). The package registry is not an external service: install even where a
